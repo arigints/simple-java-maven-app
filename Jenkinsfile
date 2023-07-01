@@ -6,7 +6,7 @@ node {
                 sh 'mvn -B -DskipTests clean package'
             }
         } finally {
-            junit './*.xml'
+            junit './pom.xml'
         }
         stage('Test'){ 
             sh 'mvn test'
