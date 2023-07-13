@@ -7,12 +7,14 @@ node {
         try {
             stage('Test'){
                 sh 'mvn test'
+                input message: 'Lanjutkan ke tahap deploy? (Click "Proceed" to continue)'
             }
         } finally {
             junit 'target/surefire-reports/*.xml'
             }
         stage('Deliver'){
             sh './jenkins/scripts/deliver.sh'
+            sleep(60)
         }
     }
 }
