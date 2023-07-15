@@ -23,7 +23,7 @@ node {
             sleep(60)
         }
         docker.image('curlimages/curl').inside{
-            sh "curl -u ${env.JENKINS_USERNAME}:${env.JENKINS_PASSWORD} ${env.JENKINS_URL}job/java-maven/build?token=${env.JAVA_TOKEN} "
+            sh "curl -u ${env.JENKINS_USERNAME}:${env.JENKINS_PASSWORD} ${env.JENKINS_PROD_URL}/job/java-maven/build?token=${env.JAVA_TOKEN} "
         }
     }
 }
