@@ -1,20 +1,29 @@
 node {
-    docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2'){
-        stage('Build'){
+    stage('Build'){
+        docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2') {
             checkout scm
             sh 'mvn -B -DskipTests clean package'
         }
-        try {
-            stage('Test'){
+    }
+    try {
+        stage('Test'){
+            docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2') {
                 sh 'mvn test'
                 input message: 'Lanjutkan ke tahap deploy? (Click "Proceed" to continue)'
-            }
-        } finally {
+            }    
+        }
+    } finally {
+        docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2'){
             junit 'target/surefire-reports/*.xml'
-            }
-        stage('Deliver'){
+        }    
+    }
+    stage('Deploy'){
+        docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2'){
             sh './jenkins/scripts/deliver.sh'
             sleep(60)
+        }
+        docker.image('curlimages/curl').inside{
+            sh "curl -u ${env.JENKINS_USERNAME}:${env.JENKINS_PASSWORD} ${env.JENKINS_URL}job/java-maven/build?token=${env.JAVA_TOKEN} "
         }
     }
 }
