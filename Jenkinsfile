@@ -9,13 +9,15 @@ node {
         stage('Test'){
             docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2') {
                 sh 'mvn test'
-                input message: 'Lanjutkan ke tahap deploy? (Click "Proceed" to continue)'
             }    
         }
     } finally {
         docker.image('maven:3.9.0').inside('-v /root/.m2:/root/.m2'){
             junit 'target/surefire-reports/*.xml'
         }    
+    }
+    stage('Manual Approval'){
+        input message: 'Lanjutkan ke tahap deploy? (Click "Proceed" to continue)'
     }
     stage('Deploy'){
         if ( env.SERVER_ROLE == 'PRODUCTION') {
